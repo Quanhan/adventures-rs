@@ -1,0 +1,7 @@
+[package]
+name = "adventure-rs"
+version = "0.1.0"
+authors = ["Quanhan <quanhanbin@gmail.com>"]
+
+[dependencies]
+specs = "*"
