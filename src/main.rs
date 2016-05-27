@@ -5,7 +5,8 @@ use std::io::{self, BufRead};
 mod room;
 
 fn main() {
-    
+    print!("{}[2J", 27 as char);
+    println!("Welcome too <<< Adventure name here >>>.");
     let mut world = specs::World::new();
     world.register::<room::Room>();
     //world.register::<room::Exits>();
