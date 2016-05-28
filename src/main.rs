@@ -27,10 +27,6 @@ fn main() {
     
     let mut current_room = "start";
     
-    /*let (entities, rooms) = arg.fetch(|w| {
-        (w.entities(), w.read::<room::Room>())
-    });*/
-    
     while running {
         
         if show_desc {

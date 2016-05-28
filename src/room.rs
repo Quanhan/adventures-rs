@@ -52,25 +52,3 @@ impl Exit {
 impl specs::Component for Exit {
     type Storage = specs::VecStorage<Exit>;
 }
-
-/*pub struct Exits {
-    pub north: i32,
-    pub south: i32,
-    pub east: i32,
-    pub west: i32,
-}
-
-impl Exits {
-    pub fn new(n:i32, s:i32, e:i32, w:i32) -> Exits {
-        Exits {
-            north: n,
-            south: s,
-            east: e,
-            west: w,
-        }
-    }
-}
-
-impl specs::Component for Exits {
-    type Storage = specs::VecStorage<Exits>;
-}*/
