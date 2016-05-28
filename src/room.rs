@@ -1,4 +1,4 @@
-use specs::{self, Join};
+use specs::{self};
 
 pub struct Room {
     pub idname: String,
