@@ -10,23 +10,21 @@ fn main() {
     println!("Welcome to <<< Adventure name here >>>.");
     let mut world = specs::World::new();
     world.register::<room::Room>();
-    world.register::<room::Exit>();
     world.create_now().with(room::Room::new(
             "start".to_string(),
             "West of the house".to_string(), 
-            "You are standing in an open field west of a white house, with a boarded front door. You could circle the house to the north or south. There is a small mailbox here.\n".to_string())
-        ).with(room::Exit::new(
-            room::Direction::North,
-            "northhouse".to_string())
+            "You are standing in an open field west of a white house, with a boarded front door. You could circle the house to the north or south. There is a small mailbox here.\n".to_string(),
+            vec![room::Exit::new(room::Direction::North, "northhouse".to_string()),
+                 room::Exit::new(room::Direction::South, "southhouse".to_string()),
+            ])
     ).build();
     
     world.create_now().with(room::Room::new(
             "northhouse".to_string(),
             "North of the house".to_string(), 
-            "There is a bit more of a breeze this side of the house but the warm summer sun is keeping from getting cold. A boarded enterance to the house is here.\n".to_string())
-        ).with(room::Exit::new(
-            room::Direction::South,
-            "start".to_string())
+            "There is a bit more of a breeze this side of the house but the warm summer sun is keeping from getting cold. A boarded enterance to the house is here.\n".to_string(),
+            vec![room::Exit::new(room::Direction::South, "southhouse".to_string()),
+            ])
     ).build();
     
     let mut planner = specs::Planner::<()>::new(world, 4);
@@ -40,15 +38,18 @@ fn main() {
         if show_desc {
             show_desc = false;
             planner.run_custom(move |arg| {
-                let (rooms, exits, ents) = arg.fetch(|w| {
-                    (w.read::<room::Room>(), w.read::<room::Exit>(), w.entities())
+                let (rooms, ents) = arg.fetch(|w| {
+                    (w.read::<room::Room>(), w.entities())
+                    
                 });
                 
-                for (rid, room, exit) in (&ents, &rooms, &exits).iter() {
+                for (rid, room) in (&ents, &rooms).iter() {
                     if current_room == room.idname {
-                        println!("ID: {:?}\n{}", rid, room.name);
+                        println!("\nID: {:?}\n{}", rid, room.name);
                         println!("{}", room.desc);
-                        println!("Exit to {:?} leads to {}", exit.direction, exit.desternation);
+                        for exit in &room.exits {
+                            println!("a exit {:?} leads to \"{}\"", exit.direction, exit.desternation);
+                        }
                     }
                 }
             });
@@ -63,6 +64,7 @@ fn main() {
         };
         
         match input.as_ref() {
+            "room" => {println!("Current room: {}", current_room);}
             "north" => { current_room = "northhouse";
                          show_desc = true; },
             "look" => show_desc = true,
