@@ -12,14 +12,22 @@ fn main() {
     world.register::<room::Room>();
     world.register::<room::Exit>();
     world.create_now().with(room::Room::new(
-            "start".to_string(),"West of the house".to_string(), 
-            "You are standing in an open field west of a white house, with a boarded front door. You could circle the house to the north or south. There is a small mailbox here.".to_string())
+            "start".to_string(),
+            "West of the house".to_string(), 
+            "You are standing in an open field west of a white house, with a boarded front door. You could circle the house to the north or south. There is a small mailbox here.\n".to_string())
         ).with(room::Exit::new(
             room::Direction::North,
-            "northhouse".to_string()
-        ))
-    .build();
-    world.create_now().with(room::Room::new("northhouse".to_string(),"North of the house".to_string(), "This is a bit more of a breeze this side of the house but the warm summer sun is keeping from getting cold. A boarded entrence to the house is here.".to_string())).build();
+            "northhouse".to_string())
+    ).build();
+    
+    world.create_now().with(room::Room::new(
+            "northhouse".to_string(),
+            "North of the house".to_string(), 
+            "There is a bit more of a breeze this side of the house but the warm summer sun is keeping from getting cold. A boarded enterance to the house is here.\n".to_string())
+        ).with(room::Exit::new(
+            room::Direction::South,
+            "start".to_string())
+    ).build();
     
     let mut planner = specs::Planner::<()>::new(world, 4);
     let mut running = true;
@@ -30,17 +38,17 @@ fn main() {
     while running {
         
         if show_desc {
-            
             show_desc = false;
             planner.run_custom(move |arg| {
-                let rooms = arg.fetch(|w| {
-                    (w.read::<room::Room>()) 
+                let (rooms, exits, ents) = arg.fetch(|w| {
+                    (w.read::<room::Room>(), w.read::<room::Exit>(), w.entities())
                 });
                 
-                for room in (rooms).iter() {
+                for (rid, room, exit) in (&ents, &rooms, &exits).iter() {
                     if current_room == room.idname {
-                        println!("{}", room.name);
+                        println!("ID: {:?}\n{}", rid, room.name);
                         println!("{}", room.desc);
+                        println!("Exit to {:?} leads to {}", exit.direction, exit.desternation);
                     }
                 }
             });
@@ -55,9 +63,11 @@ fn main() {
         };
         
         match input.as_ref() {
+            "north" => { current_room = "northhouse";
+                         show_desc = true; },
             "look" => show_desc = true,
             "quit" => { running = false;
-                        println!("Quitting"); 
+                        println!("Goodbye"); 
             },
             _ => println!("Huh?"),
         }

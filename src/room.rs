@@ -20,6 +20,7 @@ impl specs::Component for Room {
     type Storage = specs::VecStorage<Room>;
 }
 
+#[derive(Debug)]
 pub enum Direction {
     North,
     NorthEast,
@@ -35,6 +36,7 @@ pub enum Direction {
     Out,
 }
 
+#[derive(Debug)]
 pub struct Exit {
     pub direction: Direction,
     pub desternation: String,
